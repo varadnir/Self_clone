@@ -22,9 +22,6 @@ semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
 chat = ChatGroq(temperature=0.7, model_name="llama3-70b-8192", groq_api_key="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")
 
 # ✅ Streamlit Page Configuration
-st.set_page_config(page_title="Chatbot", page_icon="🤖", layout="wide")
-st.title("🤖 VC AI Chatbot ")
-st.write("Ask me anything!")
 
 # ✅ Retrieve Context from ChromaDB
 def retrieve_context(query, top_k=1):
@@ -133,6 +130,10 @@ for msg in st.session_state.messages:
         st.chat_message("assistant").write(msg["content"])
 
 # ✅ User Input Section
+st.set_page_config(page_title="Chatbot", page_icon="🤖", layout="wide")
+st.title("🤖 VC AI Chatbot ")
+st.write("Ask me anything!")
+
 user_input = st.chat_input("Type your message...")
 
 if user_input:
