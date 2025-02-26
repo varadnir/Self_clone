@@ -12,20 +12,20 @@ from langchain.memory import ConversationBufferMemory
 from sentence_transformers import SentenceTransformer, util
 
 # ✅ Load and Extract Text from PDF
-def load_pdf(file_path):
-    """Load and extract text from a PDF file."""
-    try:
-        reader = PdfReader(file_path)
-        text = "\n".join([page.extract_text() or "" for page in reader.pages])
-        print(f"✅ Extracted text from {len(reader.pages)} pages.")
-        return text
-    except Exception as e:
-        print(f"⚠️ Error reading PDF: {str(e)}")
-        return ""
+# def load_pdf(file_path):
+#     """Load and extract text from a PDF file."""
+#     try:
+#         reader = PdfReader(file_path)
+#         text = "\n".join([page.extract_text() or "" for page in reader.pages])
+#         print(f"✅ Extracted text from {len(reader.pages)} pages.")
+#         return text
+#     except Exception as e:
+#         print(f"⚠️ Error reading PDF: {str(e)}")
+#         return ""
 
-# Example: Load PDF (Change file path as needed)
-pdf_file_path = "VC_knowledgebase.pdf"
-pdf_text = load_pdf(pdf_file_path)
+# # Example: Load PDF (Change file path as needed)
+# pdf_file_path = "VC_knowledgebase.pdf"
+# pdf_text = load_pdf(pdf_file_path)
 
 # ✅ Initialize Embedding & ChromaDB
 embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
