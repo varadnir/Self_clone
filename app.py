@@ -24,7 +24,7 @@ def load_pdf(file_path):
         return ""
 
 # Example: Load PDF (Change file path as needed)
-pdf_file_path = "Resumes1.pdf"
+pdf_file_path = "VC_knowledgebase.pdf"
 pdf_text = load_pdf(pdf_file_path)
 
 # ✅ Initialize Embedding & ChromaDB
