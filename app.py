@@ -133,22 +133,29 @@ st.write("Let's chat! Ask me anything.")
 if "chat_log" not in st.session_state:
     st.session_state.chat_log = []
 
-# ✅ Display Previous Messages
+# ✅ Display Previous Messages with Left/Right Alignment
 for message in st.session_state.chat_log:
-    st.chat_message(message["role"]).write(message["content"])
+    if message["role"] == "user":
+        with st.chat_message("user", avatar="👤"):
+            st.write(message["content"])
+    else:
+        with st.chat_message("assistant", avatar="🤖"):
+            st.write(message["content"])
 
 # ✅ Handle User Input
 user_prompt = st.chat_input("Enter your message...")
 
 if user_prompt:
-    # Store and display user input
+    # Store and display user input on the **right** with a user icon
+    with st.chat_message("user", avatar="👤"):
+        st.write(user_prompt)
     st.session_state.chat_log.append({"role": "user", "content": user_prompt})
-    st.chat_message("user").write(user_prompt)
 
     # Generate AI response
     bot_reply = query_llama3(user_prompt)
 
-    # Store and display AI response
+    # Store and display AI response on the **left** with a bot icon
+    with st.chat_message("assistant", avatar="🤖"):
+        st.write(bot_reply)
     st.session_state.chat_log.append({"role": "assistant", "content": bot_reply})
-    st.chat_message("assistant").write(bot_reply)
 
