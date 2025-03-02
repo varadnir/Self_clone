@@ -1,7 +1,6 @@
 numpy>=1.21.0
 PyPDF2>=3.0.0
 langchain>=0.1.0
-sqlite3 >= 3.35.0
 chromadb>=0.4.24
 langchain-huggingface>=0.1.0
 streamlit>=1.25.0
