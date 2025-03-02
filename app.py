@@ -124,30 +124,31 @@ def query_llama3(user_query):
         return f"⚠️ Error: {str(e)}"
 
 # ✅ Streamlit Page Configuration
-st.set_page_config(page_title="Chatbot", page_icon="🤖", layout="wide")
-st.title("🤖 VC AI Chatbot ")
-st.write("Ask me anything!")
+# ✅ Page Setup
+st.set_page_config(page_title="VC AI Assistant", page_icon="🤖", layout="wide")
+st.title("🤖 VC AI Assistant")
+st.write("Let's chat! Ask me anything.")
 
-# ✅ Initialize Chat History in Streamlit
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+# ✅ Initialize Chat History
+if "chat_log" not in st.session_state:
+    st.session_state.chat_log = []
 
-# ✅ Display Chat History
-for msg in st.session_state.messages:
-    st.chat_message(msg["role"]).write(msg["content"])
+# ✅ Display Previous Messages
+for message in st.session_state.chat_log:
+    st.chat_message(message["role"]).write(message["content"])
 
-# ✅ User Input Section
-user_input = st.chat_input("Type your message...")
+# ✅ Handle User Input
+user_prompt = st.chat_input("Enter your message...")
 
-if user_input:
-    # Append user message to chat history
-    st.session_state.messages.append({"role": "user", "content": user_input})
-    st.chat_message("user").write(user_input)
+if user_prompt:
+    # Store and display user input
+    st.session_state.chat_log.append({"role": "user", "content": user_prompt})
+    st.chat_message("user").write(user_prompt)
 
-    # Get AI Response
-    ai_response = query_llama3(user_input)
+    # Generate AI response
+    bot_reply = query_llama3(user_prompt)
 
-    # Append AI message to chat history
-    st.session_state.messages.append({"role": "assistant", "content": ai_response})
-    st.chat_message("assistant").write(ai_response)
+    # Store and display AI response
+    st.session_state.chat_log.append({"role": "assistant", "content": bot_reply})
+    st.chat_message("assistant").write(bot_reply)
 
