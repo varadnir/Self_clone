@@ -1,6 +1,4 @@
-__import__('pysqlite3')
-import sys
-sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
+import os
 import chromadb
 import streamlit as st
 import numpy as np
@@ -16,18 +14,21 @@ embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-Mi
 chroma_client = chromadb.PersistentClient(path="./chroma_db")
 collection = chroma_client.get_or_create_collection(name="ai_knowledge_base")
 
-# ✅ Initialize Memory & Chat Model
-memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
-chat = ChatGroq(temperature=0.7, model_name="llama3-70b-8192", groq_api_key="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")
+# ✅ Initialize Memory in Session State
+if "memory" not in st.session_state:
+    st.session_state.memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
-# ✅ Streamlit Page Configuration
+# ✅ Initialize Chat Model Securely
+chat = ChatGroq(temperature=0.7, model_name="llama3-70b-8192", groq_api_key="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") # Use Streamlit Secrets
+
+
+semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # ✅ Retrieve Context from ChromaDB
 def retrieve_context(query, top_k=1):
     query_embedding = embedding_model.embed_query(query)
     results = collection.query(query_embeddings=[query_embedding], n_results=top_k)
-    return results.get("documents", [[]])[0] if results else ["No relevant context found."]
+    return results.get("documents", [[]])[0] if results and results.get("documents") else ["No relevant context found."]
 
 # ✅ Evaluate Response Similarity
 def evaluate_response(user_query, bot_response, context):
@@ -38,6 +39,7 @@ def evaluate_response(user_query, bot_response, context):
 # ✅ Query AI Model
 def query_llama3(user_query):
     """Handles user queries while retrieving past chat history and ChromaDB context, then evaluates the response."""
+    
     system_prompt = """
    System Prompt: you are an ai clone who are the personality minic of the Varad Nirgude who is a Fresher in computer science.
 
@@ -99,9 +101,9 @@ def query_llama3(user_query):
         "emoji_usage": "Yes, use light emojis in casual conversations occasionally."
         }
         }
-        """
+    """
 
-    past_chat = memory.load_memory_variables({}).get("chat_history", [])
+    past_chat = st.session_state.memory.load_memory_variables({}).get("chat_history", [])
     retrieved_context = retrieve_context(user_query)
     combined_context = f"Past Chat: {past_chat}\nContext: {retrieved_context}"
 
@@ -112,11 +114,16 @@ def query_llama3(user_query):
 
     try:
         response = chat.invoke(messages)
-        memory.save_context({"input": user_query}, {"output": response.content})
+        st.session_state.memory.save_context({"input": user_query}, {"output": response.content})
         evaluation_score = evaluate_response(user_query, response.content, retrieved_context)
         return response.content if response else "⚠️ No response."
     except Exception as e:
         return f"⚠️ Error: {str(e)}"
+
+# ✅ Streamlit Page Configuration
+st.set_page_config(page_title="Chatbot", page_icon="🤖", layout="wide")
+st.title("🤖 VC AI Chatbot ")
+st.write("Ask me anything!")
 
 # ✅ Initialize Chat History in Streamlit
 if "messages" not in st.session_state:
@@ -124,16 +131,9 @@ if "messages" not in st.session_state:
 
 # ✅ Display Chat History
 for msg in st.session_state.messages:
-    if msg["role"] == "user":
-        st.chat_message("user").write(msg["content"])
-    else:
-        st.chat_message("assistant").write(msg["content"])
+    st.chat_message(msg["role"]).write(msg["content"])
 
 # ✅ User Input Section
-st.set_page_config(page_title="Chatbot", page_icon="🤖", layout="wide")
-st.title("🤖 VC AI Chatbot ")
-st.write("Ask me anything!")
-
 user_input = st.chat_input("Type your message...")
 
 if user_input:
@@ -147,3 +147,4 @@ if user_input:
     # Append AI message to chat history
     st.session_state.messages.append({"role": "assistant", "content": ai_response})
     st.chat_message("assistant").write(ai_response)
+
