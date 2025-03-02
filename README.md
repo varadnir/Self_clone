@@ -1,3 +1,9 @@
+Name : Varad Nirgude
+
+Lnkedin : https://www.linkedin.com/in/varad-nirgude-88a973234
+
+email : varadnirgude@gmail.com
+
 # VC AI Chatbot
 
 ## 🤖 Overview
