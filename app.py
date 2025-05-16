@@ -29,7 +29,7 @@ if "memory" not in st.session_state:
     st.session_state.memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
 # ✅ Initialize Chat Model Securely
-chat = ChatGroq(temperature=0.7, model_name="llama3-70b-8192", groq_api_key="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") # Use Streamlit Secrets
+chat = ChatGroq(temperature=0.7, model_name="llama3-70b-8192", groq_api_key="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") # Use Streamlit Secrets
 
 semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
 
