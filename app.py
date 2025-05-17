@@ -1,7 +1,6 @@
 __import__('pysqlite3')
 import sys
 sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
-import sqlite3
 import os
 import chromadb
 import streamlit as st
@@ -29,7 +28,8 @@ if "memory" not in st.session_state:
     st.session_state.memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
 # ✅ Initialize Chat Model Securely
-chat = ChatGroq(temperature=0.7, model_name="llama3-70b-8192", groq_api_key="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") # Use Streamlit Secrets
+groq_api_key = os.getenv("GROQ_API_KEY")
+chat = ChatGroq(temperature=0.7, model_name="llama3-70b-8192", groq_api_key=groq_api_key) # Use Streamlit Secrets
 
 semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
 
